@@ -1179,6 +1179,17 @@ function Janus(gatewayCallbacks) {
 		Janus.debug(pc_constraints);
 		config.pc = new RTCPeerConnection(pc_config, pc_constraints);
 		Janus.debug(config.pc);
+
+		var handleIceConnectionStateChange = function() {
+			var state = config.pc.iceConnectionState;
+			console.debug('%cIceConnectionState changed to `%s`.', 'connected' == state ? 'color: green' : 'color: blue', state);
+			if(state == 'connected') {
+				window.performance.mark('ice:connected');
+			}
+		};
+		config.pc.addEventListener('iceconnectionstatechange', handleIceConnectionStateChange);
+
+
 		if(config.pc.getStats) {	// FIXME
 			config.volume.value = 0;
 			config.bitrate.value = "0 kbits/sec";
